@@ -1,0 +1,444 @@
+/* CHANGE: Crafted a dashboard-oriented dark theme to match the Compose UI styling.
+ * WHY: The investment experience depends on a dense layout with clear visual hierarchy.
+ * QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
+ * REF: user-message-3
+ * SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/component/theme
+ */
+
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #e5ecff;
+  background-color: #020611;
+  --surface: rgba(11, 20, 36, 0.85);
+  --surface-alt: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #7c5cfc;
+  --accent-soft: rgba(124, 92, 252, 0.12);
+  --success: #4ade80;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, rgba(20, 56, 92, 0.35), transparent),
+    #020611;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+}
+
+.app-content {
+  flex: 1;
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 32px 20px 96px;
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.card--centered {
+  text-align: center;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  color: rgba(229, 236, 255, 0.6);
+  margin: 0 0 4px;
+}
+
+.muted {
+  color: rgba(229, 236, 255, 0.7);
+  margin: 4px 0 0;
+}
+
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  background: linear-gradient(120deg, #7c5cfc, #9770ff);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn--ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: inherit;
+}
+
+.btn--secondary {
+  background: var(--surface-alt);
+  color: inherit;
+}
+
+.home-welcome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.listing-card {
+  background: var(--surface-alt);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+}
+
+.listing-card__image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.listing-card__body {
+  padding: 16px;
+  flex: 1;
+}
+
+.listing-card__actions {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+}
+
+.listing-card__price {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.home-group__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.portfolio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.portfolio__chart {
+  text-align: right;
+}
+
+.portfolio__spark {
+  width: 220px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(124, 92, 252, 0.4), transparent);
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.home-companies {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bottom-nav {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(2, 6, 17, 0.8);
+  padding: 8px;
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+}
+
+.bottom-nav__item {
+  border: none;
+  background: transparent;
+  padding: 8px;
+  color: rgba(229, 236, 255, 0.7);
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.bottom-nav__item--active {
+  color: #fff;
+}
+
+.bottom-nav__icon {
+  font-size: 1.25rem;
+}
+
+.search-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-group input,
+.field-group select {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  padding: 10px 14px;
+  font-size: 1rem;
+}
+
+.pill-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  background: transparent;
+}
+
+.pill--active,
+.pill--accent {
+  border-color: transparent;
+  background: var(--accent-soft);
+  color: #fff;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.company-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: 16px;
+}
+
+.company-card__media {
+  position: relative;
+}
+
+.company-card__media img {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  object-fit: cover;
+}
+
+.company-card__media .pill {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+}
+
+.company-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.company-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.company-card__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.progress {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress__bar {
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(120deg, #7c5cfc, #9770ff);
+}
+
+.progress--lg {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.company-card__actions,
+.property-details__actions,
+.flow-card__actions {
+  display: flex;
+  gap: 12px;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-card dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.profile-card dt {
+  font-size: 0.85rem;
+  color: rgba(229, 236, 255, 0.7);
+}
+
+.profile-card dd {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.profile-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+.profile-list__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.property-details__image,
+.company-details__hero {
+  width: 100%;
+  border-radius: 16px;
+  max-height: 360px;
+  object-fit: cover;
+}
+
+.property-details__header,
+.company-details__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.property-details__facts,
+.company-details__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.property-details__facts dt,
+.company-details__facts dt {
+  color: rgba(229, 236, 255, 0.7);
+}
+
+.flow-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.flow-summary dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.success-card dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 24px 0;
+}
+
+@media (max-width: 900px) {
+  .company-card {
+    grid-template-columns: 1fr;
+  }
+
+  .home-welcome {
+    flex-direction: column;
+  }
+}
