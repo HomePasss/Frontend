@@ -77,6 +77,15 @@ export const InvestmentFlowScreen = () => {
   const requiredUsdc = requestedShares && onChainView ? requestedShares * onChainView.pricePerShareUi : null
   const walletUsdcBalance =
     onChainView && onChainView.userUsdcBalance > 0n ? Number(onChainView.userUsdcBalance) / 1_000_000 : null
+  // CHANGE: Surface the minted token symbol/name in the payment summary so users see what they will receive.
+  // WHY: Requirement explicitly asks to show the resulting token instead of only debits.
+  // QUOTE(TЗ): "почему не написано какие токены я получу обратно?"
+  // REF: USER-TOKEN-DISPLAY
+  // SOURCE: http://jumbo.galagen.net:2205/token (tokenName/tokenSymbol fields)
+  const mintedTokenSymbol = onChainView?.config.tokenSymbol ?? propertyChainId ?? '—'
+  const mintedTokenName = onChainView?.config.tokenName ?? 'Property share token'
+  const mintedAmountLabel =
+    requestedShares !== null && mintedTokenSymbol !== '—' ? `${requestedShares} ${mintedTokenSymbol}` : '—'
   const persistHeroIndex = (nextIndex: number) => {
     setHeroIndexes((previous) => ({ ...previous, [listingKey]: nextIndex }))
   }
@@ -427,6 +436,16 @@ export const InvestmentFlowScreen = () => {
                 <strong>
                   {requestedShares !== null ? requestedShares : onChainView ? 'Adjust amount' : '—'}
                 </strong>
+              </div>
+            </div>
+            <div className="flow-grid flow-payment__grid">
+              <div>
+                <span>Minted token</span>
+                <strong>{mintedTokenName}</strong>
+              </div>
+              <div>
+                <span>You will receive</span>
+                <strong>{mintedAmountLabel}</strong>
               </div>
             </div>
             <div className="flow-grid flow-payment__grid">

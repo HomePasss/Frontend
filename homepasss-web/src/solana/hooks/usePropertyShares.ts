@@ -6,12 +6,12 @@
 
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor'
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react'
-import { SystemProgram, PublicKey, Transaction } from '@solana/web3.js'
+import { SystemProgram, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { useCallback, useEffect, useState } from 'react'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddressSync } from '@solana/spl-token'
 import type { PropertyShares } from '../idl/property_shares_type'
 import { ACC_SCALE, USDC_DECIMALS } from '../lib/constants'
-import { PROPERTY_CONFIGS, type PropertyConfig } from '../data/properties'
+import { loadPropertyConfigs, type PropertyConfig } from '../data/properties'
 import { deriveCoreAddresses, deriveUserRewardAddress, makeAtaBundle, SPL_PROGRAM_ID } from '../lib/addresses'
 import { usePropertyProgram } from './usePropertyProgram'
 
@@ -79,6 +79,15 @@ const ensureAtaExists = async (
   return ata
 }
 
+type LogValue = string | number | boolean | bigint | null | undefined;
+type LogPayload = Record<string, LogValue>;
+
+// CHANGE: Restrict log payload types to avoid `unknown` and enforce serializable debugging data.
+// WHY: Codebase forbids `any`/`unknown`; logging should stay JSON-friendly for DevTools.
+// QUOTE(TЗ): "Никогда не использовать `any`, `unknown`, `eslint-disable`, `ts-ignore`."
+// REF: AGENTS.md
+// SOURCE: n/a
+
 export const usePropertyShares = (): PropertyActions => {
   const { program, provider } = usePropertyProgram()
   const wallet = useAnchorWallet()
@@ -86,8 +95,10 @@ export const usePropertyShares = (): PropertyActions => {
   const [properties, setProperties] = useState<PropertyView[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [configsLoaded, setConfigsLoaded] = useState(false)
+  const [configs, setConfigs] = useState<PropertyConfig[]>([])
 
-  const logEvent = (label: string, payload: Record<string, unknown> = {}) => {
+  const logEvent = (label: string, payload: LogPayload = {}) => {
     console.debug(`[property_shares] ${label}`, payload)
   }
 
@@ -98,16 +109,33 @@ export const usePropertyShares = (): PropertyActions => {
     return { program, wallet, provider }
   }
 
+  // Load property configs from API
+  useEffect(() => {
+    const loadConfigs = async () => {
+      try {
+        const loadedConfigs = await loadPropertyConfigs()
+        setConfigs(loadedConfigs as PropertyConfig[])
+        setConfigsLoaded(true)
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to load property configurations.'
+        setError(message)
+        logEvent('configs:error', { message })
+      }
+    }
+
+    void loadConfigs()
+  }, [])
+
   const refresh = useCallback(async () => {
-    if (!program) {
+    if (!program || !configsLoaded) {
       return
     }
-    logEvent('refresh:start', { entries: PROPERTY_CONFIGS.length })
+    logEvent('refresh:start', { entries: configs.length })
     setLoading(true)
     setError(null)
     try {
       const views = await Promise.all(
-        PROPERTY_CONFIGS.map(async (config) => {
+        configs.map(async (config) => {
           const addresses = deriveCoreAddresses(config.propertyId)
           const usdcMint = new PublicKey(config.usdcMint)
           const atas = makeAtaBundle(addresses.mint, usdcMint, addresses.vault, addresses.pool)
@@ -188,11 +216,13 @@ export const usePropertyShares = (): PropertyActions => {
     } finally {
       setLoading(false)
     }
-  }, [connection, program, wallet?.publicKey])
+  }, [connection, program, wallet?.publicKey, configs, configsLoaded])
 
   useEffect(() => {
-    void refresh()
-  }, [refresh])
+    if (configsLoaded) {
+      void refresh()
+    }
+  }, [configsLoaded, refresh])
 
   const findView = (propertyId: string): PropertyView => {
     const view = properties.find((item) => item.config.propertyId === propertyId)
@@ -228,26 +258,48 @@ export const usePropertyShares = (): PropertyActions => {
       if (amount <= 0) {
         throw new Error('Share amount must be greater than zero.')
       }
-      const { program: liveProgram, wallet: liveWallet, provider: liveProvider } = ensureActionContext()
-      const view = findView(propertyId)
-      logEvent('buyShares:start', { propertyId, amount })
-      const userUsdcAta = await ensureAtaExists(connection, liveProvider, view.usdcMint, liveWallet.publicKey)
-      const userSharesAta = await ensureAtaExists(connection, liveProvider, view.addresses.mint, liveWallet.publicKey)
-      const signature = await liveProgram.methods
-        .buyShares(new BN(amount))
-        .accountsStrict({
-          property: view.addresses.property,
-          vault: view.addresses.vault,
-          mint: view.addresses.mint,
-          usdcMint: view.usdcMint,
-          vaultSharesAta: view.atas.vaultSharesAta,
-          vaultUsdcAta: view.atas.vaultUsdcAta,
-          user: liveWallet.publicKey,
+    const { program: liveProgram, wallet: liveWallet, provider: liveProvider } = ensureActionContext()
+    const view = findView(propertyId)
+    logEvent('buyShares:start', { propertyId, amount })
+    const userUsdcAta = view.atas.userUsdcAta(liveWallet.publicKey)
+    const userSharesAta = view.atas.userSharesAta(liveWallet.publicKey)
+    const ataInstructions: TransactionInstruction[] = []
+    if (!(await connection.getAccountInfo(userUsdcAta))) {
+      ataInstructions.push(
+        createAssociatedTokenAccountInstruction(
+          liveProvider.wallet.publicKey,
           userUsdcAta,
+          liveWallet.publicKey,
+          view.usdcMint,
+        ),
+      )
+    }
+    if (!(await connection.getAccountInfo(userSharesAta))) {
+      ataInstructions.push(
+        createAssociatedTokenAccountInstruction(
+          liveProvider.wallet.publicKey,
           userSharesAta,
-          tokenProgram: SPL_PROGRAM_ID,
-        })
-        .rpc()
+          liveWallet.publicKey,
+          view.addresses.mint,
+        ),
+      )
+    }
+    const signature = await liveProgram.methods
+      .buyShares(new BN(amount))
+      .accountsStrict({
+        property: view.addresses.property,
+        vault: view.addresses.vault,
+        mint: view.addresses.mint,
+        usdcMint: view.usdcMint,
+        vaultSharesAta: view.atas.vaultSharesAta,
+        vaultUsdcAta: view.atas.vaultUsdcAta,
+        user: liveWallet.publicKey,
+        userUsdcAta,
+        userSharesAta,
+        tokenProgram: SPL_PROGRAM_ID,
+      })
+      .preInstructions(ataInstructions)
+      .rpc()
       logEvent('buyShares:complete', {
         propertyId,
         amount,

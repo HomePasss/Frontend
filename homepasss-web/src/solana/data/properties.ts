@@ -1,28 +1,30 @@
-// CHANGE: Mirror devnet property configuration so the React client can derive PDAs consistently.
-// WHY: The contract instructions (buy/deposit/claim) expect the same property IDs, metadata URIs, and pricing baked into the Anchor deployment.
-// QUOTE(TЗ): "Надо сделать что бы мы всё минтили"
-// REF: user-message-61
-// SOURCE: /home/user/holding_contracts_solana_hackathon/app/src/data/properties.json
+// CHANGE: Fetch devnet property configuration from http://jumbo.galagen.net:2205/token to allow dynamic configuration.
+// WHY: Properties must be loaded from the HTTP endpoint instead of being hardcoded to allow dynamic configuration as in init script.
+// QUOTE(TЗ): "нам надо что бы он грузил инфу с http://jumbo.galagen.net:2205/token"
+// REF: USER-HTTP-CONFIG
+// SOURCE: /home/user/holding_contracts_solana_hackathon/scripts/init-properties.ts
 
-export interface PropertyConfig {
-  readonly propertyId: string
-  readonly totalShares: number
-  readonly metadataUri: string
-  readonly tokenName: string
-  readonly tokenSymbol: string
-  readonly pricePerShare: number
-  readonly usdcMint: string
+// CHANGE: Remove fallback defaults so configs are sourced exclusively from the API.
+// WHY: Requirement dictates that property data is fetched only from http://jumbo.galagen.net:2205/token without default overrides.
+// QUOTE(TЗ): "Убери дефаулт конфиг Сделай что бы он всё тянул с апи только"
+// REF: USER-API-ONLY
+// SOURCE: /home/user/holding_contracts_solana_hackathon/scripts/init-properties.ts
+
+import { fetchPropertyConfigs, type PropertyConfig } from './fetchProperties'
+
+// Export interface and fetch function for dynamic loading
+export type { PropertyConfig }
+
+/**
+ * Fetch property configurations from the API endpoint.
+ *
+ * Invariants:
+ * - Returns only API-provided configurations; no bundled defaults.
+ * - Rejects when the endpoint is unreachable or returns invalid payloads.
+ *
+ * @returns Promise resolving to an array of PropertyConfig objects
+ */
+export const loadPropertyConfigs = async (): Promise<readonly PropertyConfig[]> => {
+  const configs = await fetchPropertyConfigs()
+  return configs
 }
-
-export const PROPERTY_CONFIGS: readonly PropertyConfig[] = [
-  {
-    propertyId: 'villa-alpha',
-    totalShares: 1000,
-    metadataUri:
-      'https://raw.githubusercontent.com/skulidropek/holding_contracts_solana_hackathon/main/config/metadata/villa-alpha.json',
-    tokenName: 'Villa Alpha Share',
-    tokenSymbol: 'VILLA',
-    pricePerShare: 2_000_000,
-    usdcMint: 'Qkw4FajST5m3z9dtcD5QwX5cn1WfiAcmVsNhqtgJBvB',
-  },
-]
