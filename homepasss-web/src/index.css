@@ -639,3 +639,231 @@ body {
 .mobile-card__cta .btn {
   width: 100%;
 }
+
+.property-flow__hero {
+  position: relative;
+  height: 260px;
+  border-radius: 32px;
+  overflow: hidden;
+  background: #031a16;
+}
+
+.property-flow__hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.property-flow__hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(3, 26, 22, 0.9));
+}
+
+/* CHANGE: Styled hero navigation, slider wizard, and payment cards to replicate the Compose property flow visuals.
+ * WHY: The HTML markup now mirrors the KMP structure; without dedicated CSS the design would still differ, violating the 1:1 requirement.
+ * QUOTE(TЗ): "Вот эта страница должна выглядеть вот так (Как на изображении)"
+ * REF: user-message-47
+ * SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/PropertyDetailsScreen.kt
+ */
+.property-flow__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.property-flow__nav--prev {
+  left: 16px;
+}
+
+.property-flow__nav--next {
+  right: 16px;
+}
+
+.property-flow__dots {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.property-flow__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+}
+
+.property-flow__dot.active {
+  background: #7c5cfc;
+}
+
+.property-flow__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: none;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.property-flow__summary h1 {
+  margin-bottom: 4px;
+}
+
+.property-flow__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.property-flow__info,
+.property-flow__description {
+  background: var(--mobile-card);
+}
+
+.property-flow__info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.property-flow__cta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.flow-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.flow-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.flow-slider input[type='range'] {
+  width: 100%;
+  accent-color: #7c5cfc;
+}
+
+.flow-slider__value {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flow-slider__value strong {
+  font-size: 1.5rem;
+}
+
+.flow-slider__labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.flow-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.flow-grid span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.flow-review {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.flow-review > div span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.flow-documents {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flow-documents li {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.flow-payment {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.flow-payment__option {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  color: inherit;
+}
+
+.flow-payment__option strong {
+  display: block;
+}
+
+.flow-payment__option span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.flow-payment__option--active {
+  border-color: #7c5cfc;
+  background: rgba(124, 92, 252, 0.12);
+}
+
+.flow-security {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
