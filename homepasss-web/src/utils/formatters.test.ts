@@ -1,6 +1,5 @@
 // CHANGE: Added regression tests for the currency/percentage helpers.
 // WHY: Guarantees the formatting invariants demanded by the Compose utilities.
-// QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
 // REF: user-message-3
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/utils/formatTwoDecimalCommon.kt
 

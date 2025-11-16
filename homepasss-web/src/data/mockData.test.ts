@@ -1,6 +1,5 @@
 // CHANGE: Verified that the mock dataset mirrors the Kotlin repositories.
 // WHY: Ensures navigation targets have backing data in the web port.
-// QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
 // REF: user-message-3
 // SOURCE: context.txt §core/data/src/commonMain/kotlin/com/yet/data/repository
 

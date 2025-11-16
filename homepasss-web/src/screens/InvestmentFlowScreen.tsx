@@ -1,6 +1,5 @@
 // CHANGE: Investment wizard now operates on houses coming from HouseRepository.
 // WHY: Mirrors the Compose flow, which starts from a House id and loads details before collecting amounts.
-// QUOTE(TЗ): "Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/InvestmentFlowScreen.kt
 
@@ -60,7 +59,7 @@ export const InvestmentFlowScreen = () => {
   if (isLoading || isLoadingDetails) {
     return (
       <section className="screen">
-        <div className="card card--centered">Проверяем объект…</div>
+        <div className="card card--centered">Loading property…</div>
       </section>
     )
   }
@@ -68,7 +67,7 @@ export const InvestmentFlowScreen = () => {
   if (!house) {
     return (
       <section className="screen">
-        <div className="card card--centered">Объект не найден.</div>
+        <div className="card card--centered">Property not found.</div>
       </section>
     )
   }
@@ -103,12 +102,12 @@ export const InvestmentFlowScreen = () => {
   return (
     <section className="screen">
       <article className="card flow-card">
-        <p className="eyebrow">Шаг {step + 1} из 3</p>
-        <h1>Инвестиция · {house.name}</h1>
+        <p className="eyebrow">Step {step + 1} of 3</p>
+        <h1>Investment · {house.name}</h1>
 
         {step === 0 && (
           <div className="field-group">
-            <label htmlFor="amount">Сумма инвестиции</label>
+            <label htmlFor="amount">Investment amount</label>
             <input
               id="amount"
               type="number"
@@ -117,7 +116,7 @@ export const InvestmentFlowScreen = () => {
               value={amount}
               onChange={(event) => setAmount(Number(event.target.value))}
             />
-            <p className="muted">Мин. вход 10 000$</p>
+            <p className="muted">Minimum entry 10 000$</p>
           </div>
         )}
 
@@ -125,15 +124,15 @@ export const InvestmentFlowScreen = () => {
           <div className="flow-summary">
             <dl>
               <div>
-                <dt>Сумма</dt>
+                <dt>Amount</dt>
                 <dd>{formatCurrencyRubles(amount)}</dd>
               </div>
               <div>
-                <dt>Доля</dt>
+                <dt>Share</dt>
                 <dd>{formatPercent(sharePercentage)}</dd>
               </div>
               <div>
-                <dt>Доход / год</dt>
+                <dt>Income / year</dt>
                 <dd>{formatCurrencyRubles(expectedIncome)}</dd>
               </div>
             </dl>
@@ -142,17 +141,17 @@ export const InvestmentFlowScreen = () => {
 
         {step === 2 && (
           <p>
-            Подтвердите перевод {formatCurrencyRubles(amount)}. Средства будут зарезервированы за
-            объектом &laquo;{house.name}&raquo;.
+            Confirm transferring {formatCurrencyRubles(amount)}. Funds will be reserved for
+            “{house.name}”.
           </p>
         )}
 
         <div className="flow-card__actions">
           <button type="button" className="btn btn--ghost" onClick={handlePrev}>
-            Назад
+            Back
           </button>
           <button type="button" className="btn" onClick={handleNext}>
-            {step === 2 ? 'Подтвердить' : 'Продолжить'}
+            {step === 2 ? 'Confirm' : 'Continue'}
           </button>
         </div>
       </article>

@@ -1,6 +1,5 @@
 // CHANGE: Centralized the Solana auth context definition and contract.
 // WHY: Separating the store from the provider keeps React Refresh satisfied and improves reuse.
-// QUOTE(TЗ): "Можешь теперь подключить Solana?"
 // REF: user-message-6
 // SOURCE: /home/user/holding_contracts_solana_hackathon/app/src/hooks/usePropertyShares.ts
 

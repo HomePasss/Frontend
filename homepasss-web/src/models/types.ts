@@ -1,6 +1,5 @@
 // CHANGE: Added strongly typed domain models mirroring the Kotlin data contracts.
 // WHY: Strict typing is required to preserve the invariants from the KMP reference when porting to React.
-// QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
 // REF: user-message-3
 // SOURCE: context.txt §core/domain/src/commonMain/kotlin/com/yet/domain/model
 

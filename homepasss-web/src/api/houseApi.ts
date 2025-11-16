@@ -1,6 +1,5 @@
 // CHANGE: Implemented a thin HouseApi client mirroring the KMP ktorfit definitions.
 // WHY: React screens must call the same backend endpoints (`houses`, `user_houses`, `user/{id}`) that the Kotlin version relies on.
-// QUOTE(TЗ): "Можешь глянуть текущую версию context.txt там были добавлены использование API Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §core/data/src/commonMain/kotlin/com/yet/data/api/HouseApi.kt
 

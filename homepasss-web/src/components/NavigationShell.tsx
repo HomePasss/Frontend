@@ -1,6 +1,5 @@
 // CHANGE: Implemented the shared scaffold with bottom navigation to mirror MainNavigation.kt.
 // WHY: Central shell preserves tab selection logic and keeps detail routes within the same chrome.
-// QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
 // REF: user-message-3
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/navigation/MainNavigation.kt
 
@@ -34,7 +33,7 @@ export const NavigationShell = () => {
       <main className="app-content">
         <Outlet />
       </main>
-      <nav aria-label="Основная навигация" className="bottom-nav">
+      <nav aria-label="Primary navigation" className="bottom-nav">
         {tabs.map((tab) => {
           const isActive =
             location.pathname === tab.path ||

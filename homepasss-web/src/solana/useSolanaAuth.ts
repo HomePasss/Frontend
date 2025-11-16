@@ -1,6 +1,5 @@
 // CHANGE: Isolated the Solana auth hook to comply with fast-refresh lint rules.
 // WHY: Hooks can live outside component files without breaking React Refresh invariants.
-// QUOTE(TЗ): "Можешь теперь подключить Solana?"
 // REF: user-message-6
 // SOURCE: /home/user/holding_contracts_solana_hackathon/app/src/App.tsx
 

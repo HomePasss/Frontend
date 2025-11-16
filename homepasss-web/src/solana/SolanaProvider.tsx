@@ -1,6 +1,5 @@
 // CHANGE: Introduced Solana wallet providers (connection, wallet list, modal) used across the app.
 // WHY: Blockchain auth requires the same adapter stack as the reference Solana dashboard.
-// QUOTE(TЗ): "Можешь теперь подключить Solana?"
 // REF: user-message-6
 // SOURCE: /home/user/holding_contracts_solana_hackathon/app/src/main.tsx
 

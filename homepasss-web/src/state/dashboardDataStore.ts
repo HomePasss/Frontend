@@ -1,6 +1,5 @@
 // CHANGE: Broadened the dashboard store contract to expose API-driven houses alongside the remaining mocks.
 // WHY: Screens need unified access to remote houses/user data and static investments/companies.
-// QUOTE(TЗ): "Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/viewmodel
 

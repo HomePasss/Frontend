@@ -1,6 +1,5 @@
 // CHANGE: Added a repository that mirrors HomeRepository/HouseRepository logic from the KMP app.
 // WHY: React components now consume real API data (houses, user houses, user) rather than mocks, preserving behaviour.
-// QUOTE(TЗ): "Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §§composeApp/.../HomeViewModel.kt, core/data/.../HouseRepositoryImpl.kt
 

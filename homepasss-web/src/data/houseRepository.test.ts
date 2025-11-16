@@ -1,6 +1,5 @@
 // CHANGE: Verified the portfolio calculation mirrors HomeViewModel fallback logic.
 // WHY: Ensures the port stays faithful to the Kotlin implementation when no API totals are available.
-// QUOTE(TЗ): "Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/viewmodel/HomeViewModel.kt
 

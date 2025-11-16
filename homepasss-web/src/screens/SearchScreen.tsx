@@ -1,6 +1,5 @@
 // CHANGE: Search now operates on HouseApi payloads (houses) instead of static listings.
 // WHY: Matches SearchViewModel, which queries HouseRepository for all houses before filtering.
-// QUOTE(TЗ): "Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/SearchScreen.kt
 
@@ -99,7 +98,7 @@ export const SearchScreen = () => {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="muted">Нет предложений с такими параметрами.</p>
+        <p className="muted">No properties match these filters.</p>
       ) : (
         filtered.map((house) => (
           <article

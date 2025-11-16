@@ -1,6 +1,5 @@
 // CHANGE: Wired up the React Router tree to mirror MainNavigation and all Compose routes.
 // WHY: Ensures parity with the Kotlin navigation graph when running the Vite application.
-// QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
 // REF: user-message-3
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/navigation/MainNavigation.kt
 

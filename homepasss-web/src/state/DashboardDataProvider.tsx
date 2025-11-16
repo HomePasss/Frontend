@@ -1,6 +1,5 @@
 // CHANGE: Provider now hydrates React state from the real HouseApi plus the remaining mock datasets.
 // WHY: Ensures web screens observe the same remote houses/users that Kotlin fetches via HomeRepositoryImpl.
-// QUOTE(TЗ): "Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/viewmodel/HomeViewModel.kt
 

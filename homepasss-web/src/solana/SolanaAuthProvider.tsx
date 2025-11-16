@@ -1,6 +1,5 @@
 // CHANGE: Implements the Solana auth state machine (signature + error handling) as a provider component.
 // WHY: Needed for blockchain authorization similar to the provided Solana example project.
-// QUOTE(TЗ): "Можешь теперь подключить Solana? Что бы мы могли авторизацию через блокчейн на клиенте сделать"
 // REF: user-message-6
 // SOURCE: /home/user/holding_contracts_solana_hackathon/app/src/App.tsx
 

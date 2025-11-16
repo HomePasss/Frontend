@@ -1,6 +1,5 @@
 // CHANGE: Retained deterministic mocks for sections that still lack backend endpoints (companies, investments, shares).
 // WHY: Only the house/user data moved to HTTP, the remaining screens still rely on Kotlin’s mock repositories.
-// QUOTE(TЗ): "Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §core/data/src/commonMain/kotlin/com/yet/data/repository
 

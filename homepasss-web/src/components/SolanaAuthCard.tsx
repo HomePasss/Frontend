@@ -1,6 +1,5 @@
 // CHANGE: Added Solana auth widget with wallet connect button and signature CTA.
 // WHY: Users must be able to connect Phantom/Solflare and sign a message to authenticate.
-// QUOTE(TЗ): "Что бы мы могли авторизацию через блокчейн на клиенте сделать"
 // REF: user-message-6
 // SOURCE: /home/user/holding_contracts_solana_hackathon/app/src/App.tsx
 

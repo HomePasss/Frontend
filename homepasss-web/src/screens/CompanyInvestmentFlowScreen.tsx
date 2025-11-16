@@ -1,6 +1,5 @@
 // CHANGE: Added investment wizard for construction companies.
 // WHY: Compose app supports both property and company investments; parity is required.
-// QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
 // REF: user-message-3
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/CompanyInvestmentFlowScreen.kt
 
@@ -25,7 +24,7 @@ export const CompanyInvestmentFlowScreen = () => {
   if (isLoading) {
     return (
       <section className="screen">
-        <div className="card card--centered">Загрузка компании…</div>
+        <div className="card card--centered">Loading company…</div>
       </section>
     )
   }
@@ -33,7 +32,7 @@ export const CompanyInvestmentFlowScreen = () => {
   if (!company) {
     return (
       <section className="screen">
-        <div className="card card--centered">Компания не найдена.</div>
+        <div className="card card--centered">Company not found.</div>
       </section>
     )
   }
@@ -69,11 +68,11 @@ export const CompanyInvestmentFlowScreen = () => {
   return (
     <section className="screen">
       <article className="card flow-card">
-        <p className="eyebrow">Шаг {step + 1} из 3</p>
-        <h1>Инвестиция · {company.name}</h1>
+        <p className="eyebrow">Step {step + 1} of 3</p>
+        <h1>Investment · {company.name}</h1>
         {step === 0 && (
           <div className="field-group">
-            <label htmlFor="company-amount">Сумма</label>
+            <label htmlFor="company-amount">Amount</label>
             <input
               id="company-amount"
               type="number"
@@ -83,8 +82,8 @@ export const CompanyInvestmentFlowScreen = () => {
               onChange={(event) => setAmount(Number(event.target.value))}
             />
             <p className="muted">
-              Мин. {formatCurrencyRubles(company.minInvestmentAmount)} · ожидание{' '}
-              {company.expectedReturn}% годовых
+              Min. {formatCurrencyRubles(company.minInvestmentAmount)} · expected return{' '}
+              {company.expectedReturn}% per year
             </p>
           </div>
         )}
@@ -92,23 +91,25 @@ export const CompanyInvestmentFlowScreen = () => {
           <div className="flow-summary">
             <dl>
               <div>
-                <dt>Новая доля раунда</dt>
+                <dt>Round progress</dt>
                 <dd>{newProgress.toFixed(2)}%</dd>
               </div>
               <div>
-                <dt>Сумма</dt>
+                <dt>Amount</dt>
                 <dd>{formatCurrencyRubles(amount)}</dd>
               </div>
             </dl>
           </div>
         )}
-        {step === 2 && <p>Подтвердите перевод {formatCurrencyRubles(amount)}. Компания подтвердит сделку в кошельке.</p>}
+        {step === 2 && (
+          <p>Confirm transferring {formatCurrencyRubles(amount)}. The company will finalize via wallet.</p>
+        )}
         <div className="flow-card__actions">
           <button type="button" className="btn btn--ghost" onClick={handlePrev}>
-            Назад
+            Back
           </button>
           <button type="button" className="btn" onClick={handleNext}>
-            {step === 2 ? 'Подтвердить' : 'Продолжить'}
+            {step === 2 ? 'Confirm' : 'Continue'}
           </button>
         </div>
       </article>

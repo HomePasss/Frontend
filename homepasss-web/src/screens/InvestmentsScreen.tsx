@@ -1,6 +1,5 @@
 // CHANGE: Implemented the construction company explorer with search and investment shortcuts.
 // WHY: This mirrors the Kotlin InvestmentsScreen to keep the funnel identical.
-// QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
 // REF: user-message-3
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/InvestmentsScreen.kt
 
@@ -26,7 +25,7 @@ export const InvestmentsScreen = () => {
   if (isLoading) {
     return (
       <section className="screen">
-        <div className="card card--centered">Загрузка компаний…</div>
+        <div className="card card--centered">Loading companies…</div>
       </section>
     )
   }

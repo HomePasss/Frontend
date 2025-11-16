@@ -1,6 +1,5 @@
 // CHANGE: Property details now resolve data directly from HouseApi (via houseRepository).
 // WHY: Aligns with PropertyDetailsViewModel fetching house details from HouseRepository.
-// QUOTE(TЗ): "Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/PropertyDetailsScreen.kt
 
@@ -58,7 +57,7 @@ export const PropertyDetailsScreen = () => {
   if (isLoading || isLoadingDetails) {
     return (
       <section className="screen">
-        <div className="card card--centered">Загрузка объекта…</div>
+        <div className="card card--centered">Loading property…</div>
       </section>
     )
   }
@@ -66,7 +65,7 @@ export const PropertyDetailsScreen = () => {
   if (!house) {
     return (
       <section className="screen">
-        <div className="card card--centered">Объект не найден.</div>
+        <div className="card card--centered">Property not found.</div>
       </section>
     )
   }
@@ -85,32 +84,32 @@ export const PropertyDetailsScreen = () => {
             <h1>{house.name}</h1>
           </div>
           <span className="pill">
-            {house.listingType === 'FRACTIONAL' ? 'Фракции' : 'Целиком'}
+            {house.listingType === 'FRACTIONAL' ? 'Fractional' : 'Whole ownership'}
           </span>
         </div>
         <p className="muted">{house.description}</p>
         <dl className="property-details__facts">
           <div>
-            <dt>Стоимость</dt>
+            <dt>Price</dt>
             <dd>
-              {house.cost ? formatCurrencyRubles(house.cost) : 'Цена уточняется у агентства'}
+              {house.cost ? formatCurrencyRubles(house.cost) : 'Price available on request'}
             </dd>
           </div>
           <div>
-            <dt>Адрес</dt>
+            <dt>Address</dt>
             <dd>{house.address}</dd>
           </div>
           <div>
-            <dt>Тип</dt>
-            <dd>{house.propertyType === 'HOUSE' ? 'Дом' : 'Квартира'}</dd>
+            <dt>Type</dt>
+            <dd>{house.propertyType === 'HOUSE' ? 'House' : 'Apartment'}</dd>
           </div>
         </dl>
         <div className="property-details__actions">
           <button type="button" className="btn btn--ghost" onClick={() => navigate(-1)}>
-            Назад
+            Back
           </button>
           <button type="button" className="btn" onClick={() => navigate(`/invest/${house.id}`)}>
-            Инвестировать
+            Invest
           </button>
         </div>
       </article>

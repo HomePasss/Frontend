@@ -1,6 +1,5 @@
 // CHANGE: Implemented the rich detail page for construction companies.
 // WHY: Investors need a breakdown before committing, matching the Compose sheet content.
-// QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
 // REF: user-message-3
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/ConstructionCompanyDetailsScreen.kt
 
@@ -26,7 +25,7 @@ export const ConstructionCompanyDetailsScreen = () => {
   if (isLoading) {
     return (
       <section className="screen">
-        <div className="card card--centered">Загрузка компании…</div>
+        <div className="card card--centered">Loading company…</div>
       </section>
     )
   }
@@ -34,7 +33,7 @@ export const ConstructionCompanyDetailsScreen = () => {
   if (!company) {
     return (
       <section className="screen">
-        <div className="card card--centered">Компания не найдена.</div>
+        <div className="card card--centered">Company not found.</div>
       </section>
     )
   }
@@ -55,37 +54,37 @@ export const ConstructionCompanyDetailsScreen = () => {
         <p className="muted">{company.description}</p>
         <dl className="company-details__facts">
           <div>
-            <dt>Проектов</dt>
+            <dt>Projects</dt>
             <dd>
               {company.completedProjects}/{company.totalProjects}
             </dd>
           </div>
           <div>
-            <dt>Инвесторов</dt>
+            <dt>Investors</dt>
             <dd>{formatNumberWithSpaces(company.investorsCount)}</dd>
           </div>
           <div>
-            <dt>Мин. вход</dt>
+            <dt>Min. investment</dt>
             <dd>{formatCurrencyRubles(company.minInvestmentAmount)}</dd>
           </div>
         </dl>
         <div className="progress progress--lg">
           <div className="progress__bar" style={{ width: `${Math.min(progress * 100, 100)}%` }} />
           <span>
-            {formatCurrencyRubles(company.currentInvestmentAmount)} из{' '}
+            {formatCurrencyRubles(company.currentInvestmentAmount)} of{' '}
             {formatCurrencyRubles(company.totalInvestmentAmount)}
           </span>
         </div>
         <div className="company-card__actions">
           <button type="button" className="btn btn--ghost" onClick={() => navigate(-1)}>
-            Назад
+            Back
           </button>
           <button
             type="button"
             className="btn"
             onClick={() => navigate(`/invest/company/${company.id}`)}
           >
-            Инвестировать
+            Invest
           </button>
         </div>
       </article>

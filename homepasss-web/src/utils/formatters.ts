@@ -1,6 +1,5 @@
 // CHANGE: Recreated numeric formatting helpers from the Compose utilities.
 // WHY: Screens expect ruble-formatted values identical to the Kotlin reference implementation.
-// QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
 // REF: user-message-3
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/utils/formatTwoDecimalCommon.kt
 

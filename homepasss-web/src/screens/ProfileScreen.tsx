@@ -1,6 +1,5 @@
 // CHANGE: Added the profile screen with user metadata, investments, and share holdings.
 // WHY: The Compose ProfileScreen controls auth and financial overview, so we mirror it here.
-// QUOTE(TЗ): "Можешь переписать код с KMP на TypeScript React Vite"
 // REF: user-message-3
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/ProfileScreen.kt
 
@@ -32,19 +31,19 @@ export const ProfileScreen = () => {
       <div className="card profile-card">
         <div>
           <h1>Solana Wallet</h1>
-          <p className="muted">Используйте кошелек для авторизации и инвестиций.</p>
+          <p className="muted">Use your wallet for authentication and investing.</p>
         </div>
         <dl>
           <div>
-            <dt>Роль</dt>
+            <dt>Role</dt>
             <dd>INVESTOR</dd>
           </div>
           <div>
-            <dt>Активные инвестиции</dt>
+            <dt>Active investments</dt>
             <dd>{investments.length}</dd>
           </div>
           <div>
-            <dt>Доли</dt>
+            <dt>Shares</dt>
             <dd>{propertyShares.length}</dd>
           </div>
         </dl>
@@ -52,10 +51,10 @@ export const ProfileScreen = () => {
 
       <div className="card">
         <div className="home-group__header">
-          <h2>Инвестиции</h2>
+          <h2>Investments</h2>
         </div>
         {investments.length === 0 ? (
-          <p className="muted">Нет недавних операций.</p>
+          <p className="muted">No recent activity.</p>
         ) : (
           <ul className="profile-list">
             {investments.map((investment) => (
@@ -63,7 +62,7 @@ export const ProfileScreen = () => {
                 <div>
                   <p className="eyebrow">{formatIsoDate(investment.date)}</p>
                   <h3>{investment.propertyTitle}</h3>
-                  <p className="muted">Ожидаемая доходность {investment.expectedReturn}%</p>
+                  <p className="muted">Expected return {investment.expectedReturn}%</p>
                 </div>
                 <div className="profile-list__actions">
                   <strong>{formatCurrencyRubles(investment.amount)}</strong>
@@ -81,7 +80,7 @@ export const ProfileScreen = () => {
                       })
                     }
                   >
-                    Чек
+                    Receipt
                   </button>
                 </div>
               </li>
@@ -92,10 +91,10 @@ export const ProfileScreen = () => {
 
       <div className="card">
         <div className="home-group__header">
-          <h2>Доли объектов</h2>
+          <h2>Owned shares</h2>
         </div>
         {propertyShares.length === 0 ? (
-          <p className="muted">У вас пока нет долей.</p>
+          <p className="muted">You don’t have any shares yet.</p>
         ) : (
           <ul className="profile-list">
             {propertyShares.map((share) => (
@@ -103,7 +102,7 @@ export const ProfileScreen = () => {
                 <div>
                   <p className="eyebrow">{formatIsoDate(share.purchaseDate)}</p>
                   <h3>{share.propertyTitle}</h3>
-                  <p className="muted">Доля {share.percentage}%</p>
+                  <p className="muted">Share {share.percentage}%</p>
                 </div>
                 <div className="profile-list__actions">
                   <strong>{formatCurrencyRubles(share.currentValue)}</strong>
@@ -112,7 +111,7 @@ export const ProfileScreen = () => {
                     className="btn btn--ghost"
                     onClick={() => navigate(`/listings/${share.propertyId}`)}
                   >
-                    Подробнее
+                    Details
                   </button>
                 </div>
               </li>

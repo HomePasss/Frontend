@@ -1,6 +1,5 @@
 // CHANGE: Home screen now renders houses fetched via HouseApi instead of static listings.
 // WHY: Mirrors HomeViewModel which loads houses/portfolio through HouseRepository/HomeRepository.
-// QUOTE(TЗ): "Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/HomeScreen.kt
 
@@ -37,7 +36,7 @@ export const HomeScreen = () => {
   if (isLoading || !portfolio) {
     return (
       <section className="screen">
-        <div className="card card--centered">Загрузка портфеля…</div>
+        <div className="card card--centered">Loading portfolio…</div>
       </section>
     )
   }
@@ -51,28 +50,28 @@ export const HomeScreen = () => {
       />
 
       <ListingGroup
-        title="Фракционные предложения"
-        subtitle="Станьте совладельцем премиальных объектов"
+        title="Fractional ownership"
+        subtitle="Become a co-owner of premium properties"
         houses={fractionalHouses.slice(0, 3)}
       />
 
       <ListingGroup
-        title="Полные объекты"
-        subtitle="Доступны для покупки целиком или аренды"
+        title="Whole ownership"
+        subtitle="Available for full purchase or rent"
         houses={wholeHouses.slice(0, 3)}
       />
 
       <div className="card home-companies">
         <div>
-          <h2>Строительные партнеры</h2>
-          <p className="muted">Инвестируйте в pipeline компаний с высоким рейтингом.</p>
+          <h2>Construction partners</h2>
+          <p className="muted">Invest in pipelines of highly rated companies.</p>
         </div>
         <button
           type="button"
           className="btn"
           onClick={() => navigate('/investments')}
         >
-          Смотреть компании
+          View companies
         </button>
       </div>
     </section>
@@ -93,7 +92,7 @@ const ListingGroup = ({ title, subtitle, houses }: ListingGroupProps) => {
           <h2>{title}</h2>
           {subtitle ? <p className="muted">{subtitle}</p> : null}
         </div>
-        <span className="eyebrow">Объектов: {houses.length}</span>
+        <span className="eyebrow">Properties: {houses.length}</span>
       </div>
       <div className="listing-grid">
         {houses.map((house) => (
@@ -108,10 +107,10 @@ const ListingGroup = ({ title, subtitle, houses }: ListingGroupProps) => {
               <p className="eyebrow">{house.address}</p>
               <h3>{house.name}</h3>
               <p className="muted">
-                {house.listingType === 'FRACTIONAL' ? 'Фракционный' : 'Целиком'}
+                {house.listingType === 'FRACTIONAL' ? 'Fractional' : 'Whole ownership'}
               </p>
               <p className="listing-card__price">
-                {house.cost ? formatCurrencyRubles(house.cost) : 'Цена по запросу'}
+                {house.cost ? formatCurrencyRubles(house.cost) : 'Price on request'}
               </p>
             </div>
             <div className="listing-card__actions">
@@ -120,14 +119,14 @@ const ListingGroup = ({ title, subtitle, houses }: ListingGroupProps) => {
                 className="btn btn--ghost"
                 onClick={() => navigate(`/listings/${house.id}`)}
               >
-                Подробнее
+                Details
               </button>
               <button
                 type="button"
                 className="btn"
                 onClick={() => navigate(`/invest/${house.id}`)}
               >
-                Инвестировать
+                Invest
               </button>
             </div>
           </article>
@@ -147,7 +146,7 @@ const PortfolioCard = ({ total, change, changePercent }: PortfolioCardProps) => 
   return (
     <div className="portfolio card">
       <div>
-        <p className="eyebrow">Портфель</p>
+        <p className="eyebrow">Portfolio</p>
         <h2>{total}</h2>
         <p className="muted">
           +{change} (+{changePercent}%)
@@ -155,7 +154,7 @@ const PortfolioCard = ({ total, change, changePercent }: PortfolioCardProps) => 
       </div>
       <div className="portfolio__chart">
         <div className="portfolio__spark" />
-        <p className="muted">Рост за 12 месяцев</p>
+        <p className="muted">Growth over 12 months</p>
       </div>
     </div>
   )

@@ -1,6 +1,5 @@
 // CHANGE: Success screen resolves its property name via HouseRepository to match the KMP navigation result.
 // WHY: Guarantees consistency even on reload, just like InvestmentSuccessScreen pulls from the nav args.
-// QUOTE(TЗ): "Перенеси его 1 в 1"
 // REF: user-message-4
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/InvestmentSuccessScreen.kt
 
@@ -68,7 +67,7 @@ export const InvestmentSuccessScreen = () => {
   if (isLoading || isLoadingDetails) {
     return (
       <section className="screen">
-        <div className="card card--centered">Фиксируем данные сделки…</div>
+        <div className="card card--centered">Finalizing transaction…</div>
       </section>
     )
   }
@@ -76,7 +75,7 @@ export const InvestmentSuccessScreen = () => {
   if (!state?.investmentAmount || !state.sharePercentage || (!house && !state.propertyTitle)) {
     return (
       <section className="screen">
-        <div className="card card--centered">Не удалось загрузить чек.</div>
+        <div className="card card--centered">Unable to load receipt.</div>
       </section>
     )
   }
@@ -84,24 +83,24 @@ export const InvestmentSuccessScreen = () => {
   return (
     <section className="screen">
       <article className="card success-card">
-        <h1>Инвестиция подтверждена 🎉</h1>
-        <p className="muted">Вы стали совладельцем {house?.name ?? state.propertyTitle}.</p>
+        <h1>Investment confirmed 🎉</h1>
+        <p className="muted">You are now a co-owner of {house?.name ?? state.propertyTitle}.</p>
         <dl>
           <div>
-            <dt>Сумма</dt>
+            <dt>Amount</dt>
             <dd>{formatCurrencyRubles(state.investmentAmount)}</dd>
           </div>
           <div>
-            <dt>Доля</dt>
+            <dt>Share</dt>
             <dd>{formatPercent(state.sharePercentage)}</dd>
           </div>
           <div>
-            <dt>Объект</dt>
+            <dt>Property</dt>
             <dd>{house?.name ?? state.propertyTitle}</dd>
           </div>
         </dl>
         <button type="button" className="btn" onClick={() => navigate('/')}>
-          На главную
+          Back to home
         </button>
       </article>
     </section>
