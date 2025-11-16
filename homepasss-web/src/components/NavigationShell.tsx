@@ -5,19 +5,20 @@
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/navigation/MainNavigation.kt
 
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import type { ReactNode } from 'react'
+import type { ComponentType } from 'react'
+import { House, MagnifyingGlass, TrendUp, User } from 'phosphor-react'
 
 interface TabConfig {
   readonly label: string
   readonly path: string
-  readonly icon: ReactNode
+  readonly icon: ComponentType<{ size?: number; weight?: 'regular' | 'fill' }>
 }
 
 const tabs: readonly TabConfig[] = [
-  { label: 'Главная', path: '/', icon: '🏠' },
-  { label: 'Поиск', path: '/search', icon: '🔎' },
-  { label: 'Инвестиции', path: '/investments', icon: '📈' },
-  { label: 'Профиль', path: '/profile', icon: '👤' },
+  { label: 'Home', path: '/', icon: House },
+  { label: 'Search', path: '/search', icon: MagnifyingGlass },
+  { label: 'Investments', path: '/investments', icon: TrendUp },
+  { label: 'Profile', path: '/profile', icon: User },
 ]
 
 /**
@@ -47,7 +48,7 @@ export const NavigationShell = () => {
               onClick={() => navigate(tab.path)}
             >
               <span aria-hidden="true" className="bottom-nav__icon">
-                {tab.icon}
+                <tab.icon size={24} weight={isActive ? 'fill' : 'regular'} />
               </span>
               <span>{tab.label}</span>
             </button>

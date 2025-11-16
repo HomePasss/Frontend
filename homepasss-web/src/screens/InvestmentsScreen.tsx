@@ -5,7 +5,6 @@
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/InvestmentsScreen.kt
 
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useDashboardData } from '../state/dashboardDataStore'
 import { formatCurrencyRubles, formatNumberWithSpaces } from '../utils/formatters'
 
@@ -16,7 +15,6 @@ import { formatCurrencyRubles, formatNumberWithSpaces } from '../utils/formatter
 export const InvestmentsScreen = () => {
   const { companies, isLoading } = useDashboardData()
   const [query, setQuery] = useState('')
-  const navigate = useNavigate()
 
   const filtered = useMemo(() => {
     return companies.filter((company) => {
@@ -34,72 +32,84 @@ export const InvestmentsScreen = () => {
   }
 
   return (
-    <section className="screen">
-      <div className="card search-controls">
-        <div className="field-group">
-          <label htmlFor="company-search">Поиск компаний</label>
+    <section className="screen screen--mobile">
+      <div className="mobile-header">
+        <div className="search-bar">
+          <span className="search-bar__icon">🔍</span>
           <input
             id="company-search"
-            placeholder="Название или город"
+            placeholder="Search companies..."
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
-        <p className="muted">Найдено: {filtered.length}</p>
+        <p className="mobile-section-title">Companies found: {filtered.length}</p>
       </div>
 
       {filtered.map((company) => {
-        const progress = company.currentInvestmentAmount / company.totalInvestmentAmount
+        const progress = Math.min(company.currentInvestmentAmount / company.totalInvestmentAmount, 1)
         return (
-          <article key={company.id} className="card company-card">
+          <article
+            key={company.id}
+            className="company-card"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate(`/companies/${company.id}`)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                navigate(`/companies/${company.id}`)
+              }
+            }}
+          >
             <div className="company-card__media">
               <img src={company.imageUrl} alt={company.name} loading="lazy" />
-              <span className="pill">{company.location}</span>
+              <span className="pill">Return: {company.expectedReturn}%</span>
+              <span className="mobile-card__badge mobile-card__badge--accent">★ {company.rating.toFixed(2)}</span>
             </div>
             <div className="company-card__body">
               <div className="company-card__header">
-                <h2>{company.name}</h2>
-                <span className="pill pill--accent">{company.expectedReturn}% годовых</span>
+                <div>
+                  <h2>{company.name}</h2>
+                  <p className="muted">{company.description}</p>
+                </div>
               </div>
-              <p className="muted">{company.description}</p>
+              <div className="mobile-card__meta">
+                <span>📍 {company.location}</span>
+              </div>
               <ul className="company-card__stats">
                 <li>
-                  <span className="eyebrow">Проектов</span>
+                  <span className="eyebrow">Projects</span>
                   <strong>
                     {company.completedProjects}/{company.totalProjects}
                   </strong>
                 </li>
                 <li>
-                  <span className="eyebrow">Инвесторов</span>
+                  <span className="eyebrow">Investors</span>
                   <strong>{formatNumberWithSpaces(company.investorsCount)}</strong>
                 </li>
                 <li>
-                  <span className="eyebrow">Мин. вход</span>
+                  <span className="eyebrow">Min. Investment</span>
                   <strong>{formatCurrencyRubles(company.minInvestmentAmount)}</strong>
                 </li>
               </ul>
-              <div className="progress">
-                <div className="progress__bar" style={{ width: `${Math.min(progress * 100, 100)}%` }} />
-                <span>
-                  {formatCurrencyRubles(company.currentInvestmentAmount)} /{' '}
-                  {formatCurrencyRubles(company.totalInvestmentAmount)}
+              <div className="mobile-card__meta">
+                <span>Min. investment</span>
+                <span className="mobile-card__stat-value">
+                  {formatCurrencyRubles(company.minInvestmentAmount)}
                 </span>
               </div>
-              <div className="company-card__actions">
-                <button
-                  type="button"
-                  className="btn btn--ghost"
-                  onClick={() => navigate(`/companies/${company.id}`)}
-                >
-                  Подробнее
-                </button>
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={() => navigate(`/invest/company/${company.id}`)}
-                >
-                  Инвестировать
-                </button>
+              <div className="mobile-card__progress">
+                <span>{Math.round(progress * 100)}%</span>
+                <div className="mobile-progress-track">
+                  <div className="mobile-progress-fill" style={{ width: `${progress * 100}%` }} />
+                </div>
+              </div>
+              <div className="mobile-card__progress">
+                <span>{Math.round(progress * 100)}%</span>
+                <div className="mobile-progress-track">
+                  <div className="mobile-progress-fill" style={{ width: `${progress * 100}%` }} />
+                </div>
               </div>
             </div>
           </article>

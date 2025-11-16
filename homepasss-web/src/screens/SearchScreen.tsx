@@ -12,11 +12,6 @@ import { formatCurrencyRubles } from '../utils/formatters'
 
 type SortOption = 'newest' | 'priceAsc' | 'priceDesc'
 
-interface PriceFilter {
-  readonly min: string
-  readonly max: string
-}
-
 /**
  * Search UI that mirrors the Kotlin filters: text search, listing type, price range, and sorting.
  * @returns React node with filtered listing results.
@@ -27,7 +22,6 @@ export const SearchScreen = () => {
   const [query, setQuery] = useState<string>('')
   const [selectedType, setSelectedType] = useState<ListingType | 'ALL'>('ALL')
   const [sortOption, setSortOption] = useState<SortOption>('newest')
-  const [priceFilter, setPriceFilter] = useState<PriceFilter>({ min: '', max: '' })
 
   const filtered = useMemo(() => {
     return houses
@@ -40,14 +34,7 @@ export const SearchScreen = () => {
         const typeLabel = house.listingType ?? 'WHOLE'
         const matchesType = selectedType === 'ALL' || typeLabel === selectedType
 
-        const min = priceFilter.min ? Number(priceFilter.min) : null
-        const max = priceFilter.max ? Number(priceFilter.max) : null
-        const price = house.cost ?? 0
-
-        const matchesMin = min === null || price >= min
-        const matchesMax = max === null || price <= max
-
-        return matchesQuery && matchesType && matchesMin && matchesMax
+        return matchesQuery && matchesType
       })
       .sort((a, b) => {
         switch (sortOption) {
@@ -60,123 +47,103 @@ export const SearchScreen = () => {
             return b.id - a.id
         }
       })
-  }, [houses, priceFilter.max, priceFilter.min, query, selectedType, sortOption])
+  }, [houses, query, selectedType, sortOption])
 
   return (
-    <section className="screen">
-      <div className="card search-controls">
-        <div className="field-group">
-          <label htmlFor="search">Поиск</label>
+    <section className="screen screen--mobile">
+      <div className="mobile-header">
+        <div className="search-bar">
+          <span className="search-bar__icon">🔍</span>
           <input
-            id="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Название или локация"
+            placeholder="City, district, property..."
           />
         </div>
-
-        <div className="field-group">
-          <label>Тип</label>
-          <div className="pill-group">
-            {(['ALL', 'WHOLE', 'FRACTIONAL'] as const).map((type) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => setSelectedType(type === 'ALL' ? 'ALL' : type)}
-                className={`pill ${selectedType === type ? 'pill--active' : ''}`}
-              >
-                {type === 'ALL' ? 'Все' : type === 'WHOLE' ? 'Целиком' : 'Фракции'}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="filter-grid">
-          <div className="field-group">
-            <label htmlFor="price-min">Мин. цена</label>
-            <input
-              id="price-min"
-              type="number"
-              inputMode="numeric"
-              value={priceFilter.min}
-              onChange={(event) => setPriceFilter((prev) => ({ ...prev, min: event.target.value }))}
-            />
-          </div>
-          <div className="field-group">
-            <label htmlFor="price-max">Макс. цена</label>
-            <input
-              id="price-max"
-              type="number"
-              inputMode="numeric"
-              value={priceFilter.max}
-              onChange={(event) => setPriceFilter((prev) => ({ ...prev, max: event.target.value }))}
-            />
-          </div>
-          <div className="field-group">
-            <label htmlFor="sort">Сортировка</label>
-            <select
-              id="sort"
-              value={sortOption}
-              onChange={(event) => setSortOption(event.target.value as SortOption)}
+        <div className="chip-group">
+          {(['ALL', 'WHOLE', 'FRACTIONAL'] as const).map((type) => (
+            <button
+              key={type}
+              type="button"
+              className={`chip ${selectedType === type ? 'chip--active' : ''}`}
+              onClick={() => setSelectedType(type === 'ALL' ? 'ALL' : type)}
             >
-              <option value="newest">Сначала новые</option>
-              <option value="priceAsc">Цена ↑</option>
-              <option value="priceDesc">Цена ↓</option>
-            </select>
-          </div>
+              {type === 'ALL' ? 'All' : type === 'WHOLE' ? 'Whole Ownership' : 'Fractional Ownership'}
+            </button>
+          ))}
         </div>
+        <div className="chip-group">
+          <button
+            type="button"
+            className={`chip ${sortOption === 'newest' ? 'chip--active' : ''}`}
+            onClick={() => setSortOption('newest')}
+          >
+            By popularity ↓
+          </button>
+          <button
+            type="button"
+            className={`chip ${sortOption === 'priceAsc' ? 'chip--active' : ''}`}
+            onClick={() => setSortOption('priceAsc')}
+          >
+            Price ↑
+          </button>
+          <button
+            type="button"
+            className={`chip ${sortOption === 'priceDesc' ? 'chip--active' : ''}`}
+            onClick={() => setSortOption('priceDesc')}
+          >
+            Price ↓
+          </button>
+        </div>
+        <p className="mobile-section-title">Found {filtered.length} properties</p>
       </div>
 
-      <div className="card">
-        <div className="home-group__header">
-          <div>
-            <h2>Найдено объектов: {filtered.length}</h2>
-            <p className="muted">Используйте фильтры, чтобы ускорить поиск.</p>
-          </div>
-        </div>
-        {filtered.length === 0 ? (
-          <p className="muted">Нет предложений с такими параметрами.</p>
-        ) : (
-          <div className="listing-grid">
-            {filtered.map((house) => (
-              <article key={house.id} className="listing-card">
-                <img
-                  src={house.images[0]}
-                  alt={house.name}
-                  loading="lazy"
-                  className="listing-card__image"
-                />
-                <div className="listing-card__body">
-                  <p className="eyebrow">{house.address}</p>
-                  <h3>{house.name}</h3>
-                  <p className="muted">
-                    {house.listingType === 'FRACTIONAL' ? 'Доступны доли' : 'Полная продажа'}
-                  </p>
-                  <p className="listing-card__price">
-                    {house.cost ? formatCurrencyRubles(house.cost) : 'Цена по запросу'}
-                  </p>
+      {filtered.length === 0 ? (
+        <p className="muted">Нет предложений с такими параметрами.</p>
+      ) : (
+        filtered.map((house) => (
+          <article
+            key={house.id}
+            className="mobile-card"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate(`/invest/${house.id}`)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                navigate(`/invest/${house.id}`)
+              }
+            }}
+          >
+            <div className="mobile-card__image-wrapper">
+              <img src={house.images[0]} alt={house.name} className="mobile-card__image" loading="lazy" />
+              <span className="mobile-card__badge">15% Available</span>
+              <span className="mobile-card__badge mobile-card__badge--accent">+12.5%</span>
+            </div>
+            <div className="mobile-card__body">
+              <div className="mobile-card__headline">
+                <h3 className="mobile-card__title">{house.name}</h3>
+              </div>
+              <div className="mobile-card__meta">
+                <span>📍 {house.address}</span>
+                <span>👥 247</span>
+              </div>
+              <div className="mobile-card__stat-row">
+                <span>From</span>
+                <span className="mobile-card__stat-value">
+                  {house.cost ? formatCurrencyRubles(house.cost) : 'Price on request'}
+                </span>
+              </div>
+              <div className="mobile-card__progress">
+                <span>50%</span>
+                <div className="mobile-progress-track">
+                  <div className="mobile-progress-fill" style={{ width: '50%' }} />
                 </div>
-                <div className="listing-card__actions">
-                  <button
-                    type="button"
-                    className="btn btn--ghost"
-                    onClick={() => navigate(`/listings/${house.id}`)}
-                  >
-                    Детали
-                  </button>
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={() => navigate(`/invest/${house.id}`)}
-                  >
-                    Инвестировать
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-      </div>
+              </div>
+            </div>
+          </article>
+        ))
+      )}
     </section>
   )
 }
