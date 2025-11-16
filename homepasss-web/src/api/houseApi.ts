@@ -6,7 +6,11 @@
 
 import type { User } from '../models/types'
 
-const BASE_URL = 'http://jumbo.galagen.net:2205/'
+const REMOTE_BASE = 'http://jumbo.galagen.net:2205'
+const LOCAL_BASE = '/house-api'
+const BASE_URL =
+  (import.meta.env.VITE_HOUSE_API_BASE as string | undefined) ??
+  (import.meta.env.DEV ? LOCAL_BASE : REMOTE_BASE)
 
 export interface HouseDTO {
   readonly id: number
@@ -29,15 +33,19 @@ export interface UserResponse {
 type QueryParams = Record<string, string | number | undefined>
 
 const buildUrl = (path: string, params?: QueryParams): string => {
-  const url = new URL(path, BASE_URL)
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined) {
-        url.searchParams.set(key, String(value))
-      }
-    })
-  }
-  return url.toString()
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const search = params
+    ? `?${new URLSearchParams(
+        Object.entries(params).reduce<Record<string, string>>((acc, [key, value]) => {
+          if (value !== undefined) {
+            acc[key] = String(value)
+          }
+          return acc
+        }, {}),
+      ).toString()}`
+    : ''
+
+  return `${BASE_URL}${normalizedPath}${search}`
 }
 
 const request = async <T>(path: string, params?: QueryParams): Promise<T> => {

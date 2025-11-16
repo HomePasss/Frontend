@@ -360,6 +360,21 @@ body {
   font-size: 1.2rem;
 }
 
+.profile-card__solana {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.profile-card__signature {
+  display: block;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  word-break: break-all;
+  margin-top: 8px;
+}
+
 .profile-list {
   list-style: none;
   padding: 0;
@@ -431,6 +446,11 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
   margin: 24px 0;
+}
+
+.app__error {
+  color: #ff9393;
+  margin: 0;
 }
 
 @media (max-width: 900px) {

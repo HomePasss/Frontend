@@ -8,6 +8,15 @@ import react from '@vitejs/plugin-react'
 // SOURCE: context.txt §AGENTS instructions
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      '/house-api': {
+        target: 'http://jumbo.galagen.net:2205',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/house-api/, ''),
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,

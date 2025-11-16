@@ -8,6 +8,7 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDashboardData } from '../state/dashboardDataStore'
 import { formatCurrencyRubles, formatIsoDate } from '../utils/formatters'
+import { SolanaAuthCard } from '../components/SolanaAuthCard'
 
 /**
  * Shows the authenticated user's information and investments.
@@ -41,6 +42,7 @@ export const ProfileScreen = () => {
 
   return (
     <section className="screen">
+      <SolanaAuthCard />
       <div className="card profile-card">
         <div>
           <h1>{currentUser.name}</h1>
