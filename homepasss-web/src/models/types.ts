@@ -199,13 +199,6 @@ export interface PropertyShare {
  * @property userRole Role literal copied from the KMP enum.
  * @invariant Email must contain '@' per frontend validation rules.
  */
-export interface User {
-  readonly id: string
-  readonly name: string
-  readonly email: string
-  readonly userRole: 'BUYER' | 'SELLER' | 'INVESTOR' | 'AGENT'
-}
-
 /**
  * Aggregated portfolio snapshot used on the home screen.
  * @property totalValue Current valuation.

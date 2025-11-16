@@ -4,8 +4,6 @@
 // REF: user-message-4
 // SOURCE: context.txt §core/data/src/commonMain/kotlin/com/yet/data/api/HouseApi.kt
 
-import type { User } from '../models/types'
-
 const REMOTE_BASE = 'http://jumbo.galagen.net:2205'
 const LOCAL_BASE = '/house-api'
 const BASE_URL =
@@ -21,13 +19,6 @@ export interface HouseDTO {
   readonly cost?: number
   readonly tokens?: number
   readonly type?: string
-}
-
-export interface UserResponse {
-  readonly id?: number
-  readonly wallet?: string
-  readonly name?: string
-  readonly surname?: string
 }
 
 type QueryParams = Record<string, string | number | undefined>
@@ -63,25 +54,4 @@ export const houseApi = {
   async getUserHouses(userId: number, count = 10): Promise<HouseDTO[]> {
     return request<HouseDTO[]>('user_houses', { user_id: userId, n: count })
   },
-  async getUser(userId: number): Promise<UserResponse> {
-    return request<UserResponse>(`user/${userId}`)
-  },
-}
-
-/**
- * KMP equivalent ensures we always have a valid domain user even if optional API fields are missing.
- * @param response Raw DTO from the House API.
- * @returns Sanitised user object.
- */
-export const mapUserResponseToDomain = (response: UserResponse): User => {
-  if (!response.id || !response.name || !response.surname) {
-    throw new Error('HouseApi user response is missing required fields')
-  }
-  const wallet = response.wallet ?? ''
-  return {
-    id: String(response.id),
-    name: `${response.name} ${response.surname}`.trim(),
-    email: wallet,
-    userRole: 'INVESTOR',
-  }
 }

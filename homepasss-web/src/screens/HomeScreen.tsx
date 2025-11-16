@@ -21,7 +21,7 @@ interface ListingGroupProps {
  * @returns React node replicating the Compose dashboard.
  */
 export const HomeScreen = () => {
-  const { houses, currentUser, portfolio, isLoading } = useDashboardData()
+  const { houses, portfolio, isLoading } = useDashboardData()
   const navigate = useNavigate()
 
   const fractionalHouses = useMemo(
@@ -47,7 +47,7 @@ export const HomeScreen = () => {
       <div className="home-welcome card">
         <div>
           <p className="eyebrow">Приветствуем</p>
-          <h1>{currentUser?.name ?? 'Инвестор'}</h1>
+          <h1>Инвестор</h1>
           <p className="muted">Сфокусируйтесь на инвестициях в недвижимость премиум-класса.</p>
         </div>
         <button

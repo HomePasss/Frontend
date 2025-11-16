@@ -15,7 +15,7 @@ import { formatCurrencyRubles } from '../utils/formatters'
  */
 export const CompanyInvestmentFlowScreen = () => {
   const { companyId } = useParams()
-  const { companies, currentUser, isLoading } = useDashboardData()
+  const { companies, isLoading } = useDashboardData()
   const navigate = useNavigate()
   const [step, setStep] = useState(0)
   const [amount, setAmount] = useState(25_000)
@@ -102,12 +102,7 @@ export const CompanyInvestmentFlowScreen = () => {
             </dl>
           </div>
         )}
-        {step === 2 && (
-          <p>
-            Подтвердите перевод {formatCurrencyRubles(amount)}. Компания направит документы на почту{' '}
-            {currentUser?.email ?? 'investor@homepasss.dev'}.
-          </p>
-        )}
+        {step === 2 && <p>Подтвердите перевод {formatCurrencyRubles(amount)}. Компания подтвердит сделку в кошельке.</p>}
         <div className="flow-card__actions">
           <button type="button" className="btn btn--ghost" onClick={handlePrev}>
             Назад

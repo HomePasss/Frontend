@@ -11,7 +11,6 @@ import type {
   Investment,
   PortfolioSnapshot,
   PropertyShare,
-  User,
 } from '../models/types'
 
 export interface DashboardDataContextValue {
@@ -20,7 +19,6 @@ export interface DashboardDataContextValue {
   readonly companies: readonly ConstructionCompany[]
   readonly investments: readonly Investment[]
   readonly propertyShares: readonly PropertyShare[]
-  readonly currentUser: User | null
   readonly portfolio: PortfolioSnapshot | null
   readonly isLoading: boolean
   refresh(): void

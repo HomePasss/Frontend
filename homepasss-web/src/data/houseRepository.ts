@@ -4,14 +4,13 @@
 // REF: user-message-4
 // SOURCE: context.txt §§composeApp/.../HomeViewModel.kt, core/data/.../HouseRepositoryImpl.kt
 
-import { houseApi, mapUserResponseToDomain, type HouseDTO } from '../api/houseApi'
+import { houseApi, type HouseDTO } from '../api/houseApi'
 import type {
   House,
   ListingType,
   PortfolioSnapshot,
   PropertyStatus,
   PropertyType,
-  User,
 } from '../models/types'
 
 const toPropertyType = (type?: string): PropertyType | undefined => {
@@ -65,18 +64,10 @@ export const houseRepository = {
     const dtos = await houseApi.getHouses(count)
     return mapDtosToHouses(dtos)
   },
-  async getUserHouses(userId: number, count = 10): Promise<House[]> {
-    const dtos = await houseApi.getUserHouses(userId, count)
-    return mapDtosToHouses(dtos)
-  },
   async getHouseDetails(id: number): Promise<House | null> {
     const dtos = await houseApi.getHouses(100)
     const match = dtos.find((house) => house.id === id)
     return match ? mapDtoToHouse(match) : null
-  },
-  async getCurrentUser(userId: number): Promise<User> {
-    const response = await houseApi.getUser(userId)
-    return mapUserResponseToDomain(response)
   },
 }
 

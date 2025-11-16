@@ -15,43 +15,29 @@ import { SolanaAuthCard } from '../components/SolanaAuthCard'
  * @returns React element.
  */
 export const ProfileScreen = () => {
-  const { currentUser, investments: allInvestments, propertyShares: allShares } = useDashboardData()
+  const { investments: allInvestments, propertyShares: allShares } = useDashboardData()
   const navigate = useNavigate()
 
   const investments = useMemo(() => {
-    if (!currentUser) {
-      return []
-    }
-    return allInvestments.filter((investment) => investment.userId === currentUser.id)
-  }, [allInvestments, currentUser])
+    return allInvestments
+  }, [allInvestments])
 
   const propertyShares = useMemo(() => {
-    if (!currentUser) {
-      return []
-    }
-    return allShares.filter((share) => share.ownerId === currentUser.id)
-  }, [allShares, currentUser])
-
-  if (!currentUser) {
-    return (
-      <section className="screen">
-        <div className="card card--centered">Пользователь не найден.</div>
-      </section>
-    )
-  }
+    return allShares
+  }, [allShares])
 
   return (
     <section className="screen">
       <SolanaAuthCard />
       <div className="card profile-card">
         <div>
-          <h1>{currentUser.name}</h1>
-          <p className="muted">{currentUser.email}</p>
+          <h1>Solana Wallet</h1>
+          <p className="muted">Используйте кошелек для авторизации и инвестиций.</p>
         </div>
         <dl>
           <div>
             <dt>Роль</dt>
-            <dd>{currentUser.userRole}</dd>
+            <dd>INVESTOR</dd>
           </div>
           <div>
             <dt>Активные инвестиции</dt>

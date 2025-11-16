@@ -7,15 +7,11 @@
 import { useCallback, useEffect, useRef, useState, type PropsWithChildren } from 'react'
 import { constructionCompanies, mockInvestments, mockPropertyShares } from '../data/mockData'
 import { calculatePortfolioData, houseRepository } from '../data/houseRepository'
-import type { House, PortfolioSnapshot, User } from '../models/types'
+import type { House, PortfolioSnapshot } from '../models/types'
 import { DashboardDataContext } from './dashboardDataStore'
-
-const DEFAULT_USER_ID = 1
 
 export const DashboardDataProvider = ({ children }: PropsWithChildren) => {
   const [houses, setHouses] = useState<House[]>([])
-  const [userHouses, setUserHouses] = useState<House[]>([])
-  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [portfolio, setPortfolio] = useState<PortfolioSnapshot | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const isMountedRef = useRef(true)
@@ -37,7 +33,7 @@ export const DashboardDataProvider = ({ children }: PropsWithChildren) => {
       }
     try {
       log('Fetching houses and user profile…')
-      const [remoteHouses, remoteUserHouses, user] = await Promise.all([
+      const [remoteHouses] = await Promise.all([
         houseRepository
           .getHouses(10)
           .then((houses) => {
@@ -48,26 +44,6 @@ export const DashboardDataProvider = ({ children }: PropsWithChildren) => {
             logError('getHouses failed', error)
             throw error
           }),
-        houseRepository
-          .getUserHouses(DEFAULT_USER_ID, 10)
-          .then((houses) => {
-            log('getUserHouses succeeded', { count: houses.length })
-            return houses
-          })
-          .catch((error) => {
-            logError('getUserHouses failed', error)
-            throw error
-          }),
-        houseRepository
-          .getCurrentUser(DEFAULT_USER_ID)
-          .then((userData) => {
-            log('getCurrentUser succeeded', { id: userData.id })
-            return userData
-          })
-          .catch((error) => {
-            logError('getCurrentUser failed', error)
-            throw error
-          }),
       ])
       if (!isMountedRef.current) {
         log('Component unmounted before state update, aborting')
@@ -75,21 +51,15 @@ export const DashboardDataProvider = ({ children }: PropsWithChildren) => {
       }
       log('Loaded data', {
         houses: remoteHouses.length,
-        userHouses: remoteUserHouses.length,
-        userId: user.id,
       })
       setHouses(remoteHouses)
-      setUserHouses(remoteUserHouses)
-      setCurrentUser(user)
-      setPortfolio(calculatePortfolioData(remoteUserHouses))
+      setPortfolio(calculatePortfolioData(remoteHouses))
     } catch (error) {
       logError('Failed to load dashboard data', error)
       if (!isMountedRef.current) {
         return
       }
       setHouses([])
-      setUserHouses([])
-      setCurrentUser(null)
       setPortfolio(null)
     } finally {
       if (isMountedRef.current) {
@@ -120,11 +90,9 @@ export const DashboardDataProvider = ({ children }: PropsWithChildren) => {
     <DashboardDataContext.Provider
       value={{
         houses,
-        userHouses,
         companies: constructionCompanies,
         investments: mockInvestments,
         propertyShares: mockPropertyShares,
-        currentUser,
         portfolio,
         isLoading,
         refresh,
