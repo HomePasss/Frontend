@@ -8,6 +8,8 @@
 // QUOTE(TЗ): "Вот эта страница должна выглядеть вот так (Как на изображении)"
 // REF: user-message-47
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/PropertyDetailsScreen.kt
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { houseRepository } from '../data/houseRepository'
@@ -15,6 +17,8 @@ import { useDashboardData } from '../state/dashboardDataStore'
 import { formatCurrencyRubles, formatPercent } from '../utils/formatters'
 import type { House } from '../models/types'
 import { ArrowLeft, ArrowRight, House as HouseIcon, Ruler, TrendUp } from 'phosphor-react'
+import { usePropertyShares } from '../solana/hooks/usePropertyShares'
+import { resolveBlockchainPropertyId } from '../solana/propertyMapping'
 
 /**
  * Multi-step CTA guiding the user through the property investment.
@@ -24,19 +28,32 @@ export const InvestmentFlowScreen = () => {
   const { listingId } = useParams()
   const { houses, isLoading } = useDashboardData()
   const navigate = useNavigate()
-  const [amount, setAmount] = useState(50_000)
-  // CHANGE: Track hero carousel index and payment selection to mirror KMP navigation affordances.
-  // WHY: Without explicit state the hero carousel stayed static and no payment option could be highlighted, diverging from reference invariants.
+  const [amount, setAmount] = useState(100)
+  // CHANGE: Track hero carousel index and wizard steps per listing to mirror KMP navigation affordances.
+  // WHY: Without explicit state the hero carousel stayed static and multi-step flow would reset across rerenders.
   // QUOTE(TЗ): "Посомтри как эти окна были реализованы в KMP"
   // REF: user-message-48
   // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/ui/screens/PropertyDetailsScreen.kt
   const [heroIndexes, setHeroIndexes] = useState<Record<string, number>>({})
   const [flowSteps, setFlowSteps] = useState<Record<string, number>>({})
-  const [paymentSelections, setPaymentSelections] = useState<Record<string, 'apple_pay' | 'card' | 'bank'>>({})
   const [remoteHouseState, setRemoteHouseState] = useState<{ id: number | null; house: House | null }>({
     id: null,
     house: null,
   })
+  // CHANGE: Wire Anchor property_shares client so the checkout mints SPL shares instead of sending SOL.
+  // WHY: The requirement now is to interact with the deployed contracts and mint tokens for each investment.
+  // QUOTE(TЗ): "Надо сделать что бы мы всё минтили"
+  // REF: user-message-61
+  const { publicKey } = useWallet()
+  const {
+    buyShares,
+    properties: onChainProperties,
+    loading: isOnChainLoading,
+    error: onChainError,
+  } = usePropertyShares()
+  const [isPaying, setIsPaying] = useState(false)
+  const [paymentError, setPaymentError] = useState<string | null>(null)
+  const [txSignature, setTxSignature] = useState<string | null>(null)
   const parsedId = listingId ? Number(listingId) : null
   const listingKey = listingId ?? 'unknown'
   const cachedHouse = useMemo(() => {
@@ -49,16 +66,22 @@ export const InvestmentFlowScreen = () => {
   const isLoadingDetails = Boolean(parsedId && !cachedHouse && remoteHouseState.id !== parsedId)
   const heroIndex = heroIndexes[listingKey] ?? 0
   const step = flowSteps[listingKey] ?? 0
-  const paymentMethod = paymentSelections[listingKey] ?? 'apple_pay'
   const heroImages = house?.images?.length ? house.images : ['https://placehold.co/600x400/0a2b27/efefef?text=Property']
+  const propertyChainId = resolveBlockchainPropertyId(parsedId)
+  const onChainView =
+    propertyChainId !== null
+      ? onChainProperties.find((view) => view.config.propertyId === propertyChainId) ?? null
+      : null
+  const requestedShares =
+    onChainView && onChainView.pricePerShareUi > 0 ? Math.max(1, Math.floor(amount / onChainView.pricePerShareUi)) : null
+  const requiredUsdc = requestedShares && onChainView ? requestedShares * onChainView.pricePerShareUi : null
+  const walletUsdcBalance =
+    onChainView && onChainView.userUsdcBalance > 0n ? Number(onChainView.userUsdcBalance) / 1_000_000 : null
   const persistHeroIndex = (nextIndex: number) => {
     setHeroIndexes((previous) => ({ ...previous, [listingKey]: nextIndex }))
   }
   const persistStep = (nextStep: number) => {
     setFlowSteps((previous) => ({ ...previous, [listingKey]: nextStep }))
-  }
-  const persistPayment = (method: 'apple_pay' | 'card' | 'bank') => {
-    setPaymentSelections((previous) => ({ ...previous, [listingKey]: method }))
   }
 
   useEffect(() => {
@@ -83,6 +106,12 @@ export const InvestmentFlowScreen = () => {
     }
   }, [cachedHouse, parsedId])
 
+  useEffect(() => {
+    setPaymentError(null)
+    setIsPaying(false)
+    setTxSignature(null)
+  }, [listingKey])
+
   if (isLoading || isLoadingDetails) {
     return (
       <section className="screen">
@@ -105,25 +134,64 @@ export const InvestmentFlowScreen = () => {
   const investorsCount = house.tokens ?? 247
   const availableShare = 15
   const projectedIncome = formatCurrencyRubles(price * 0.125)
-  const formattedMinShare = formatCurrencyRubles(Math.max(price * 0.05, 10_000))
+  const formattedMinShare = formatCurrencyRubles(Math.max(price * 0.01, 1))
   const documents = [
     { id: 'ownership', label: 'Shared ownership agreement' },
     { id: 'egrn', label: 'EGRN extract' },
     { id: 'passport', label: 'Investment passport' },
   ] as const
+  const walletAddress = publicKey?.toBase58() ?? null
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 2) {
       persistStep(step + 1)
     } else {
-      navigate(`/invest/success/${house.id}`, {
-        state: {
-          listingId,
-          investmentAmount: amount,
-          propertyTitle: house.name,
-          sharePercentage,
-        },
-      })
+      if (!publicKey) {
+        setPaymentError('Connect a Solana wallet before continuing.')
+        return
+      }
+      if (!propertyChainId) {
+        setPaymentError('This listing is not mapped to a Solana property yet.')
+        return
+      }
+      if (!onChainView || !onChainView.isInitialized) {
+        setPaymentError('The Solana property state is still loading. Try again shortly.')
+        return
+      }
+      if (onChainView.pricePerShareUi <= 0 || requestedShares === null) {
+        setPaymentError('Share price is not available for this property.')
+        return
+      }
+      const sharesAsBigInt = BigInt(requestedShares)
+      if (onChainView.availableShares < sharesAsBigInt) {
+        setPaymentError('Not enough shares are available on-chain. Please lower the amount.')
+        return
+      }
+      const requiredMicroUsdc = sharesAsBigInt * BigInt(onChainView.config.pricePerShare)
+      if (onChainView.userUsdcBalance < requiredMicroUsdc) {
+        setPaymentError('You do not have enough USDC on Solana to cover this purchase.')
+        return
+      }
+      setIsPaying(true)
+      setPaymentError(null)
+      try {
+        const signature = await buyShares(propertyChainId, requestedShares)
+        setTxSignature(signature)
+        navigate(`/invest/success/${house.id}`, {
+          state: {
+            listingId,
+            investmentAmount: amount,
+            propertyTitle: house.name,
+            sharePercentage,
+            txSignature: signature,
+          },
+        })
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : 'Payment failed, try again.'
+        setPaymentError(reason)
+      } finally {
+        setIsPaying(false)
+      }
     }
   }
 
@@ -146,7 +214,7 @@ export const InvestmentFlowScreen = () => {
   }
 
   const handleAmountChange = (value: number) => {
-    const sanitized = Number.isFinite(value) ? Math.max(10_000, Math.min(value, price)) : 10_000
+    const sanitized = Number.isFinite(value) ? Math.max(1, Math.min(value, price)) : 1
     setAmount(sanitized)
   }
 
@@ -295,12 +363,12 @@ export const InvestmentFlowScreen = () => {
               <input
                 id="amount"
                 type="number"
-                min={10_000}
-                step={5_000}
+                min={1}
+                step={1}
                 value={Math.round(amount)}
                 onChange={(event) => handleAmountChange(Number(event.target.value))}
               />
-              <p className="muted">Minimum entry {formatCurrencyRubles(10_000)}</p>
+              <p className="muted">Minimum entry {formatCurrencyRubles(1)}</p>
             </div>
           </div>
         )}
@@ -337,40 +405,61 @@ export const InvestmentFlowScreen = () => {
 
         {step === 2 && (
           <div className="flow-payment">
-            <button
-              type="button"
-              className={`flow-payment__option ${paymentMethod === 'apple_pay' ? 'flow-payment__option--active' : ''}`}
-              onClick={() => persistPayment('apple_pay')}
-            >
+            <div className="flow-grid flow-payment__grid">
               <div>
-                <strong>Apple Pay</strong>
-                <span>Recommended</span>
+                <span>Network</span>
+                <strong>Solana · Devnet</strong>
               </div>
-              <span>Tap to pay</span>
-            </button>
-            <button
-              type="button"
-              className={`flow-payment__option ${paymentMethod === 'card' ? 'flow-payment__option--active' : ''}`}
-              onClick={() => persistPayment('card')}
-            >
               <div>
-                <strong>Bank card</strong>
-                <span>Visa / MasterCard</span>
+                <span>Property</span>
+                <strong>{propertyChainId ?? 'Unmapped'}</strong>
               </div>
-              <span>•••• 4242</span>
-            </button>
-            <button
-              type="button"
-              className={`flow-payment__option ${paymentMethod === 'bank' ? 'flow-payment__option--active' : ''}`}
-              onClick={() => persistPayment('bank')}
-            >
+            </div>
+            <div className="flow-grid flow-payment__grid">
               <div>
-                <strong>Bank transfer</strong>
-                <span>Manual approval</span>
+                <span>Share price</span>
+                <strong>
+                  {onChainView ? `${onChainView.pricePerShareUi.toFixed(2)} USDC` : isOnChainLoading ? 'Loading…' : '—'}
+                </strong>
               </div>
-              <span>1-2 business days</span>
-            </button>
-            <p className="flow-security">All payments are protected with a secure gateway.</p>
+              <div>
+                <span>Requested shares</span>
+                <strong>
+                  {requestedShares !== null ? requestedShares : onChainView ? 'Adjust amount' : '—'}
+                </strong>
+              </div>
+            </div>
+            <div className="flow-grid flow-payment__grid">
+              <div>
+                <span>Wallet USDC</span>
+                <strong>{walletUsdcBalance !== null ? `${walletUsdcBalance.toFixed(2)} USDC` : '—'}</strong>
+              </div>
+              <div>
+                <span>Required</span>
+                <strong>{requiredUsdc !== null ? `${requiredUsdc.toFixed(2)} USDC` : '—'}</strong>
+              </div>
+            </div>
+            <div className="flow-payment__wallet">
+              <span>Wallet</span>
+              <strong>{walletAddress ? `${walletAddress.slice(0, 4)}…${walletAddress.slice(-4)}` : 'Not connected'}</strong>
+            </div>
+            <div className="flow-payment__connect">
+              <WalletMultiButton />
+            </div>
+            <p className="muted">
+              Confirm the transaction in your wallet to mint property shares. Only mapped listings can interact with the
+              contract.
+            </p>
+            {onChainError && <p className="app__error">{onChainError}</p>}
+            {paymentError && <p className="app__error">{paymentError}</p>}
+            {txSignature && (
+              <p className="muted">
+                Transaction{' '}
+                <a href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`} target="_blank" rel="noreferrer">
+                  {txSignature.slice(0, 8)}…{txSignature.slice(-8)}
+                </a>
+              </p>
+            )}
           </div>
         )}
 
@@ -378,8 +467,21 @@ export const InvestmentFlowScreen = () => {
           <button type="button" className="btn btn--ghost" onClick={handlePrev}>
             Back
           </button>
-          <button type="button" className="btn" onClick={handleNext}>
-            {step === 2 ? 'Confirm' : 'Continue'}
+          <button
+            type="button"
+            className="btn"
+            onClick={() => void handleNext()}
+            disabled={
+              step === 2 &&
+              (!publicKey ||
+                isPaying ||
+                isOnChainLoading ||
+                propertyChainId === null ||
+                onChainView === null ||
+                requestedShares === null)
+            }
+          >
+            {step === 2 ? (isPaying ? 'Processing…' : 'Mint shares') : 'Continue'}
           </button>
         </div>
       </article>

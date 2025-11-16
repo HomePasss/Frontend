@@ -6,7 +6,7 @@
 import { clusterApiUrl } from '@solana/web3.js'
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
-import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
+import { SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
 import { useMemo, type PropsWithChildren } from 'react'
 import { SolanaAuthProvider } from './SolanaAuthProvider'
 import '@solana/wallet-adapter-react-ui/styles.css'
@@ -14,10 +14,11 @@ import '@solana/wallet-adapter-react-ui/styles.css'
 const DEVNET_ENDPOINT = clusterApiUrl('devnet')
 
 export const SolanaProvider = ({ children }: PropsWithChildren) => {
-  const wallets = useMemo(
-    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter({ network: 'devnet' })],
-    [],
-  )
+  // CHANGE: Do not instantiate Phantom adapter manually because the wallet standard already registers it.
+  // WHY: Having both adapters causes Chrome extension message-channel errors ("listener indicated an async response…").
+  // QUOTE(TЗ): "Phantom was registered as a Standard Wallet. The Wallet Adapter for Phantom can be removed from your app."
+  // REF: user-message-60
+  const wallets = useMemo(() => [new SolflareWalletAdapter({ network: 'devnet' })], [])
 
   return (
     <ConnectionProvider endpoint={DEVNET_ENDPOINT}>
