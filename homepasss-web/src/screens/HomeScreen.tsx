@@ -44,21 +44,6 @@ export const HomeScreen = () => {
 
   return (
     <section className="screen screen--home">
-      <div className="home-welcome card">
-        <div>
-          <p className="eyebrow">Приветствуем</p>
-          <h1>Инвестор</h1>
-          <p className="muted">Сфокусируйтесь на инвестициях в недвижимость премиум-класса.</p>
-        </div>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          onClick={() => navigate('/profile')}
-        >
-          Профиль
-        </button>
-      </div>
-
       <PortfolioCard
         total={formatCurrencyRubles(portfolio.totalValue)}
         change={formatCurrencyRublesCompact(portfolio.changeAmount)}
