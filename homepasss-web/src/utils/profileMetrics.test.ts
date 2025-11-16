@@ -5,8 +5,8 @@
 // SOURCE: n/a
 
 import { describe, expect, it } from 'vitest'
-import { mockInvestments } from '../data/mockData'
 import { buildAssetDistribution, buildPortfolioSeries, calculateProfileMetrics } from './profileMetrics'
+import type { Investment } from '../models/types'
 import type { TokenHolding } from './tokenHoldings'
 
 const holdings: readonly TokenHolding[] = [
@@ -30,9 +30,39 @@ const holdings: readonly TokenHolding[] = [
   },
 ]
 
+// CHANGE: Provide inline investment fixtures now that `mockData.ts` was deleted.
+// WHY: Staying testable after removing the legacy dataset keeps the suite deterministic without deprecated imports.
+// QUOTE(TЗ): "А можешь удалить это /home/user/Frontend/homepasss-web/src/data/mockData.ts ?  Это нам не адо"
+// REF: user-message-remove-mockdata
+// SOURCE: n/a
+const investments: readonly Investment[] = [
+  {
+    id: 'invest1',
+    userId: 'user1',
+    propertyId: 'inv1',
+    propertyTitle: 'Commercial property with high rental yield',
+    amount: 100_000,
+    date: '2024-10-01',
+    investedAmount: 100_000,
+    investmentDate: '2024-10-01',
+    expectedReturn: 8.5,
+  },
+  {
+    id: 'invest2',
+    userId: 'user1',
+    propertyId: 'inv2',
+    propertyTitle: 'Mixed-use development in growing market',
+    amount: 75_000,
+    date: '2024-09-15',
+    investedAmount: 75_000,
+    investmentDate: '2024-09-15',
+    expectedReturn: 7.2,
+  },
+]
+
 describe('profile metrics helpers (REQ-2, REQ-3)', () => {
   it('computes token-derived totals and income', () => {
-    const metrics = calculateProfileMetrics(holdings, mockInvestments)
+    const metrics = calculateProfileMetrics(holdings, investments)
     expect(metrics.totalPortfolioValue).toBe(622_500)
     expect(metrics.objectsCount).toBe(holdings.length)
     expect(Math.round(metrics.totalMonthlyIncome)).toBe(25_000)

@@ -7,7 +7,7 @@
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor'
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react'
 import { SystemProgram, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddressSync } from '@solana/spl-token'
 import type { PropertyShares } from '../idl/property_shares_type'
 import { ACC_SCALE, USDC_DECIMALS } from '../lib/constants'
@@ -218,11 +218,21 @@ export const usePropertyShares = (): PropertyActions => {
     }
   }, [connection, program, wallet?.publicKey, configs, configsLoaded])
 
+  const refreshRef = useRef(refresh)
+  useEffect(() => {
+    refreshRef.current = refresh
+  }, [refresh])
+
+  // CHANGE: Run the refresh loop only when configs become available instead of whenever the callback instance changes.
+  // WHY: The connection/wallet objects mutate every render, so keeping `refresh` in the dependency list caused the effect to re-fire, flooding the Solana RPC (429 spam).
+  // QUOTE(TЗ): "Почему мы видим столько спама на апи соланы?"
+  // REF: user-message-spam-api
+  // SOURCE: User console log showing repeated `[property_shares] refresh:start`/429 messages.
   useEffect(() => {
     if (configsLoaded) {
-      void refresh()
+      void refreshRef.current?.()
     }
-  }, [configsLoaded, refresh])
+  }, [configsLoaded])
 
   const findView = (propertyId: string): PropertyView => {
     const view = properties.find((item) => item.config.propertyId === propertyId)

@@ -4,7 +4,6 @@
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/viewmodel/HomeViewModel.kt
 
 import { useCallback, useEffect, useRef, useState, type PropsWithChildren } from 'react'
-import { constructionCompanies, mockInvestments } from '../data/mockData'
 import { calculatePortfolioData, houseRepository } from '../data/houseRepository'
 import type { House, PortfolioSnapshot } from '../models/types'
 import { DashboardDataContext } from './dashboardDataStore'
@@ -90,8 +89,12 @@ export const DashboardDataProvider = ({ children }: PropsWithChildren) => {
       value={{
         houses,
         userHouses: houses,
-        companies: constructionCompanies,
-        investments: mockInvestments,
+        // CHANGE: Supply empty collections for companies/investments now that the mock dataset was removed.
+        // WHY: The legacy `src/data/mockData.ts` no longer exists so we cannot resolve the previous static lists; expose empties until real API support arrives.
+        // QUOTE(TЗ): "А можешь удалить это /home/user/Frontend/homepasss-web/src/data/mockData.ts ?  Это нам не адо"
+        // REF: user-message-remove-mockdata
+        companies: [],
+        investments: [],
         portfolio,
         isLoading,
         refresh,
