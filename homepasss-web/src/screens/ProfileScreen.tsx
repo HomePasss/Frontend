@@ -66,8 +66,12 @@ export const ProfileScreen = () => {
           </div>
           <div>
             <p className="eyebrow">Profile</p>
-            <h1>{displayName}</h1>
-            <p className="muted">{walletId}</p>
+            <h1>Iraklii Nadiradze</h1>
+              <p className="muted">
+                  {walletId
+                      ? `${walletId.slice(0, 6)}...${walletId.slice(-4)}`
+                      : ""}
+              </p>
           </div>
           <button
             type="button"

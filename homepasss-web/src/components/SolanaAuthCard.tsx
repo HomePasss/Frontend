@@ -28,7 +28,11 @@ export const SolanaAuthCard = () => {
         </div>
         <div>
           <dt>Wallet</dt>
-          <dd>{publicKey ?? '—'}</dd>
+            <dd>
+                {publicKey
+                    ? `${publicKey.slice(0, 6)}...${publicKey.slice(-4)}`
+                    : '—'}
+            </dd>
         </div>
         <div>
           <dt>Last auth</dt>

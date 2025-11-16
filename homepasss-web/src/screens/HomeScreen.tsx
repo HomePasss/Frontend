@@ -153,7 +153,6 @@ const PortfolioCard = ({ total, change, changePercent }: PortfolioCardProps) => 
         </p>
       </div>
       <div className="portfolio__chart">
-        <div className="portfolio__spark" />
         <p className="muted">Growth over 12 months</p>
       </div>
     </div>
