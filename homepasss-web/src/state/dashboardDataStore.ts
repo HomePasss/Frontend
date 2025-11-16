@@ -4,20 +4,13 @@
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/viewmodel
 
 import { createContext, useContext } from 'react'
-import type {
-  ConstructionCompany,
-  House,
-  Investment,
-  PortfolioSnapshot,
-  PropertyShare,
-} from '../models/types'
+import type { ConstructionCompany, House, Investment, PortfolioSnapshot } from '../models/types'
 
 export interface DashboardDataContextValue {
   readonly houses: readonly House[]
   readonly userHouses: readonly House[]
   readonly companies: readonly ConstructionCompany[]
   readonly investments: readonly Investment[]
-  readonly propertyShares: readonly PropertyShare[]
   readonly portfolio: PortfolioSnapshot | null
   readonly isLoading: boolean
   refresh(): void

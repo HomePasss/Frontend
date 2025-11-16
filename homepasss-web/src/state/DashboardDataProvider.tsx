@@ -4,7 +4,7 @@
 // SOURCE: context.txt §composeApp/src/commonMain/kotlin/com/yet/home/viewmodel/HomeViewModel.kt
 
 import { useCallback, useEffect, useRef, useState, type PropsWithChildren } from 'react'
-import { constructionCompanies, mockInvestments, mockPropertyShares } from '../data/mockData'
+import { constructionCompanies, mockInvestments } from '../data/mockData'
 import { calculatePortfolioData, houseRepository } from '../data/houseRepository'
 import type { House, PortfolioSnapshot } from '../models/types'
 import { DashboardDataContext } from './dashboardDataStore'
@@ -89,9 +89,9 @@ export const DashboardDataProvider = ({ children }: PropsWithChildren) => {
     <DashboardDataContext.Provider
       value={{
         houses,
+        userHouses: houses,
         companies: constructionCompanies,
         investments: mockInvestments,
-        propertyShares: mockPropertyShares,
         portfolio,
         isLoading,
         refresh,
