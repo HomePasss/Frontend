@@ -63,7 +63,7 @@ body {
 }
 
 .card {
-  background: var(--surface);
+  background:rgb(151 179 160 / 13%);
   border-radius: 24px;
   padding: 24px;
   border: 1px solid var(--border);
@@ -92,7 +92,7 @@ body {
   border: none;
   border-radius: 999px;
   padding: 10px 20px;
-  background: linear-gradient(120deg, #7c5cfc, #9770ff);
+  background: #0e703b;
   color: #fff;
   cursor: pointer;
   font-weight: 600;
@@ -218,7 +218,7 @@ body {
 }
 
 .bottom-nav__item--active {
-  color: #fff;
+  color: #19bd65;
 }
 
 .bottom-nav__icon {
@@ -915,7 +915,7 @@ body {
 
 .flow-slider input[type='range'] {
   width: 100%;
-  accent-color: #7c5cfc;
+  accent-color: #19bd65;
 }
 
 .flow-slider__value {
